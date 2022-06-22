@@ -1,49 +1,13 @@
-#devtools::install_github("george-wood/cpdata", force = TRUE)
+# devtools::install_github("george-wood/cpdata", force = TRUE)
 pacman::p_load(targets, fs, data.table, purrr, cpdata)
+
+source("R/functions.R")
 
 # options
 tar_option_set(
   format   = "parquet",
-  packages = c("cpdata", "arrow", "dplyr")
+  packages = c("cpdata", "arrow", "dplyr", "lubridate")
 )
-
-# functions
-list_file <- function(path, reg = "\\.csv$", ...) {
-  dir_ls(
-    path    = paste0("~/Documents/data/cpd/", path),
-    regexp  = reg,
-    recurse = TRUE,
-    ...
-  )
-}
-
-write_data <- function(upstream) {
-
-  if (!fs::dir_exists("data/")) {
-    fs::dir_create("data/")
-  }
-
-  up <-
-    sub(
-      x = sub(x = deparse(substitute(upstream)), ".*f[.]", ""),
-      "[_|)|,].*", ""
-    )
-
-  dtcol <- ifelse("dt" %in% colnames(upstream), "dt", "dt_start")
-
-  arrow::write_dataset(
-    dataset = group_by(upstream, year := year(!!rlang::sym(dtcol))),
-    path = paste0("data/", up),
-    format = "parquet"
-  )
-
-  message("dataset written: ", up)
-  d <- data.frame(
-    report = paste0("generated dataset: ", up, " (", Sys.time(), ")")
-  )
-  return(d)
-
-}
 
 # targets
 list(
@@ -86,35 +50,73 @@ list(
   ),
   tar_target(
     f.ticket,
-    list_file("tickets", reg = "parking"),
+    list_file("tickets/", reg = "parking"),
     format = "file"
   ),
 
+
   # preprocess and write
   tar_target(
-    arrest,
-    write_data(tidy_arrest(f.arrest_report, f.arrest_officer))
+    assignment,
+    write_data(
+      data_name = "assignment",
+      tidy_assignment(f.assignment)
+    )
   ),
   tar_target(
-    assignment,
-    write_data(rbindlist(map(f.assignment, tidy_assignment)))
+    arrest,
+    write_data(
+      data_name = "arrest",
+      tidy_arrest(f.arrest_report, f.arrest_officer) |>
+        join(by = c("last_name",
+                    "first_name",
+                    "appointed",
+                    "birth"))
+    )
   ),
   tar_target(
     contact,
-    write_data(rbindlist(map(f.contact, tidy_contact)))
+    write_data(
+      data_name = "contact",
+      tidy_contact(f.contact) |>
+        join(by = c("last_name",
+                    "first_name",
+                    "birth >= birth_lower",
+                    "birth <= birth_upper"))
+    )
   ),
   tar_target(
     force,
-    write_data(tidy_force(f.force_report, f.force_action))
+    write_data(
+      data_name = "force",
+      tidy_force(f.force_report, f.force_action) |>
+        join(by = c("last_name",
+                    "first_name",
+                    "appointed",
+                    "birth >= birth_lower",
+                    "birth <= birth_upper"))
+    )
   ),
   tar_target(
     isr,
-    write_data(tidy_isr(f.isr))
+    write_data(
+      data_name = "isr",
+      tidy_isr(f.isr) |>
+        join(by = c("last_name",
+                    "first_name",
+                    "appointed",
+                    "birth"))
+    )
   ),
   tar_target(
     ticket,
-    write_data(tidy_ticket(f.ticket, zip = TRUE))
+    write_data(
+      data_name = "ticket",
+      tidy_ticket(f.ticket, zip = TRUE) |>
+        join(by = c("star"))
+    )
   )
+
 
 
 )
