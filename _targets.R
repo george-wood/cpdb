@@ -58,64 +58,57 @@ list(
   # preprocess and write
   tar_target(
     assignment,
-    write_data(
-      data_name = "assignment",
-      tidy_assignment(f.assignment)
-    )
+    tidy_assignment(f.assignment)
   ),
   tar_target(
     arrest,
-    write_data(
-      data_name = "arrest",
-      tidy_arrest(f.arrest_report, f.arrest_officer) |>
-        join(by = c("last_name",
-                    "first_name",
-                    "appointed",
-                    "birth"))
-    )
-  ),
-  tar_target(
-    contact,
-    write_data(
-      data_name = "contact",
-      tidy_contact(f.contact) |>
-        join(by = c("last_name",
-                    "first_name",
-                    "birth >= birth_lower",
-                    "birth <= birth_upper"))
-    )
-  ),
-  tar_target(
-    force,
-    write_data(
-      data_name = "force",
-      tidy_force(f.force_report, f.force_action) |>
-        join(by = c("last_name",
-                    "first_name",
-                    "appointed",
-                    "birth >= birth_lower",
-                    "birth <= birth_upper"))
-    )
-  ),
-  tar_target(
-    isr,
-    write_data(
-      data_name = "isr",
-      tidy_isr(f.isr) |>
-        join(by = c("last_name",
-                    "first_name",
-                    "appointed",
-                    "birth"))
-    )
-  ),
-  tar_target(
-    ticket,
-    write_data(
-      data_name = "ticket",
-      tidy_ticket(f.ticket, zip = TRUE) |>
-        join(by = c("star"))
-    )
+    tidy_arrest(f.arrest_report, f.arrest_officer)  |>
+      join(assignment,
+           by = c("last_name", "first_name", "initial", "appointed", "birth"))
   )
+  # ,
+  # tar_target(
+  #   contact,
+  #   write_data(
+  #     data_name = "contact",
+  #     tidy_contact(f.contact) |>
+  #       join(by = c("last_name",
+  #                   "first_name",
+  #                   "birth >= birth_lower",
+  #                   "birth <= birth_upper"))
+  #   )
+  # ),
+  # tar_target(
+  #   force,
+  #   write_data(
+  #     data_name = "force",
+  #     tidy_force(f.force_report, f.force_action) |>
+  #       join(by = c("last_name",
+  #                   "first_name",
+  #                   "appointed",
+  #                   "birth >= birth_lower",
+  #                   "birth <= birth_upper"))
+  #   )
+  # ),
+  # tar_target(
+  #   isr,
+  #   write_data(
+  #     data_name = "isr",
+  #     tidy_isr(f.isr) |>
+  #       join(by = c("last_name",
+  #                   "first_name",
+  #                   "appointed",
+  #                   "birth"))
+  #   )
+  # ),
+  # tar_target(
+  #   ticket,
+  #   write_data(
+  #     data_name = "ticket",
+  #     tidy_ticket(f.ticket, zip = TRUE) |>
+  #       join(by = c("star"))
+  #   )
+  # )
 
 
 

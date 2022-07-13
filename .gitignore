@@ -1,5 +1,6 @@
 # Data
-/data/
+_targets/objects/
+data/
 
 # OS
 .DS_Store
