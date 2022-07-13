@@ -33,22 +33,6 @@ write_data <- function(df, data_name = NULL) {
 
 }
 
-
-
-#
-# library(arrow)
-# library(data.table)
-# library(tidyverse)
-# library(lubridate)
-# assignment        = "data/assignment/"
-# return_all_events = TRUE
-# event             = arrow::open_dataset("data/arrest") |> dplyr::collect()
-# by                = c("last_name", "first_name", "appointed", "birth", "initial")
-
-#' to implement:
-#' overtime -- setDT(assignment)[, dt_overtime := dt_end + (6*60*60)]
-#' closest shift?
-
 join <- function(
     event,
     assignment,

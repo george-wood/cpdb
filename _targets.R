@@ -1,4 +1,4 @@
-# devtools::install_github("george-wood/cpdata", force = TRUE)
+devtools::install_github("george-wood/cpdata", force = TRUE)
 pacman::p_load(targets, fs, data.table, purrr, cpdata)
 
 source("R/functions.R")
