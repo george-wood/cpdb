@@ -1,8 +1,6 @@
 # cpdb
 
-Chicago Police Database
-
-Preprocess assignment, use of force, arrest, ticket, and stop and search data. The preprocessing uses the [`cpdata`](https://github.com/george-wood/cpdata) package and a make-like pipeline using [`targets`](https://github.com/ropensci/targets).
+Preprocess assignment, use of force, arrest, ticket, and stop and search data from the Chicago Police Department. The preprocessing uses the [`cpdata`](https://github.com/george-wood/cpdata) package and a make-like pipeline using [`targets`](https://github.com/ropensci/targets).
 
 ## Development
 
